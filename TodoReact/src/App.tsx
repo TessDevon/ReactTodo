@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from 'react';
 import './App.css'
+import { AddTodo } from './components/AddTodo';
+import { Todos } from './components/Todos';
+import { Todo } from './models/Todo';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState<Todo[]>([
+    new Todo("Handla", false, 1),
+    new Todo("Promenad", false, 2)
+    ]);
+
+  const addTodo = (textFromUser: string): void => {
+    setTodos([...todos, new Todo(textFromUser, false, Date.now())]);
+    //Date.now bra att ha som id då det är milisekunder utifrån viss mättid.
+    //Stort tal men kommer inte hinna bli samma som ett annat tal. 
+  }
+
+  const toggleTodo = (selectedId: number) => {
+    setTodos(todos.map((todo) => {
+      if(todo.id === selectedId) {
+        todo.done = !todo.done;
+        return todo;
+      } else {
+        return {...todo};
+      }
+    }))
+  }
+
+  const removeTodo = (selectedId: number) => {
+    setTodos(todos.filter((todo) => todo.id !== selectedId));
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <AddTodo createTodo={addTodo}></AddTodo>
+      <Todos todoList={todos} toggleTodo={toggleTodo} removeTodo={removeTodo}></Todos>
+      //Komponenten Todos ska få en todolist med todos som är härovan. 
     </>
-  )
+  );
 }
 
 export default App
