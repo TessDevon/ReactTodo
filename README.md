@@ -1,2 +1,0 @@
-# ReactTodo
-TodoApp in React
